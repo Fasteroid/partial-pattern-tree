@@ -1,0 +1,44 @@
+{
+    "name": "@fasteroid/partial-pattern-tree",
+    "version": "1.0.1",
+    "description": "Not quite partial regex matching, but pretty darn close!",
+    "main": "index.js",
+    "module": "index.js",
+    "types": "index.d.ts",
+    "scripts": {
+        "build": "tsc",
+        "test": "node -r esbuild-register --test **/*.spec.ts"
+    },
+    "author": "Fasteroid",
+    "contributors": [
+        "Fasteroid"
+    ],
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Fasteroid/partial-pattern-tree.git"
+    },
+    "keywords": [
+        "dom",
+        "svg",
+        "pan",
+        "zoom"
+    ],
+    "bugs": {
+        "url": "https://github.com/Fasteroid/partial-pattern-tree/issues"
+    },
+    "homepage": "https://github.com/Fasteroid/partial-pattern-tree#readme",
+    "devDependencies": {
+        "@types/node": "^20.17.6",
+        "typescript": "^5.6.3"
+    },
+    "files": [
+        "**/**.js",
+        "**/**.d.ts",
+        "**/**.js.map",
+        "**/**.d.ts.map"
+    ],
+    "peerDependencies": {
+        "@fasteroid/maps": "^1.0.0"
+    }
+}
