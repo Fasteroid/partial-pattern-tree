@@ -1,6 +1,6 @@
 {
     "name": "@fasteroid/partial-pattern-tree",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Not quite partial regex matching, but pretty darn close!",
     "main": "index.js",
     "module": "index.js",
@@ -19,17 +19,24 @@
         "url": "git+https://github.com/Fasteroid/partial-pattern-tree.git"
     },
     "keywords": [
-        "dom",
-        "svg",
-        "pan",
-        "zoom"
-    ],
+        "fuzzy-search",
+        "text-search",
+        "regex",
+        "search",
+        "match",
+        "partial",
+        "pattern",
+        "suffix-tree",
+        "typescript",
+        "javascript"
+      ],
     "bugs": {
         "url": "https://github.com/Fasteroid/partial-pattern-tree/issues"
     },
     "homepage": "https://github.com/Fasteroid/partial-pattern-tree#readme",
     "devDependencies": {
         "@types/node": "^20.17.6",
+        "esbuild-register": "^3.6.0",
         "typescript": "^5.6.3"
     },
     "files": [
