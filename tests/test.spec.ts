@@ -1,5 +1,6 @@
 import test from "node:test";
 import { PartialPatternTree } from "../src/index"
+import { writeFileSync } from "fs";
 
 const tree = new PartialPatternTree<string>(
     [["parake",/^e+/m,"t"], "parakeet"],
@@ -40,7 +41,7 @@ test("pennsylvania", () => {
     }
 
     if( errors.length > 0 ){
-        throw new Error(`Errors in pennsylvania: ${errors}`);
+        throw new Error(`Errors in pennsylvania: ${errors}\n(actual order was [${pennsylvania}])`);
     }
 });
 
@@ -71,7 +72,6 @@ test("indium", () => {
 test("pirate", () => {
     const pirate = tree.search("r");
     let errors: string[] = [];
-    // dog, parakeet, parrot, cat
 
     if( !pirate.includes("parakeet") ){
         errors.push("pirate didn't have parakeet");
@@ -81,16 +81,16 @@ test("pirate", () => {
         errors.push("pirate didn't have parrot");
     }
 
-    if( pirate.indexOf("dog") !== 0 ){
-        errors.push("pirate didn't have dog at index 0");
+    if( !pirate.includes("cat") ){
+        errors.push("pirate didn't have cat");
     }
 
-    if( pirate.indexOf("cat") !== 3 ){
-        errors.push("pirate didn't have cat at index 3");
+    if( pirate.indexOf("dog") !== 3 ){
+        errors.push("pirate didn't have dog at index 3");
     }
 
     if( errors.length > 0 ){
-        throw new Error(`ARRRGG 🏴‍☠️ ❌: ${errors}`);
+        throw new Error(`ARRRGG 🏴‍☠️ ❌: ${errors}\n(actual order was [${pirate}])`);
     }
 });
 

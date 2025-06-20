@@ -5,6 +5,10 @@ type Token = RegExp | string;
 
 type Sequence = Token[];
 
+type Distance = {
+    
+}
+
 /** 
  * Given a query and a token, removes the partial match of the token from the query and returns it, or `undefined` if no match. 
  */
@@ -59,9 +63,9 @@ class Node<T> {
     private readonly values = new Map<T, number>();
 
     /** Adds a sequence to the tree.  Make sure to {@link expandSequence | expand} it first! */
-    public addSequence(sequence: Sequence, value: T){
+    public addSequence(sequence: Sequence, value: T, depth = 0){
         if( sequence.length === 0 ) {
-            this.values.set(value, 0); // assume we didn't skip any tokens to get here
+            this.values.set(value, depth); // assume we didn't skip any tokens to get here
             return;
         }
 
@@ -69,25 +73,29 @@ class Node<T> {
         const rest  = sequence.slice(1);
 
         const victim = this.branches.get(first)
-        victim.addSequence(rest, value);
+        const length = typeof first === 'string' ? first.length : 1
+        victim.addSequence(rest, value, depth + length);
     }
 
     /** Merges another node into this one. */
-    private merge(that: Node<T>, depth: number){
-        for( let [k, v] of that.values ){
-            this.values.set(k, Math.max(v, depth)); // TODO: why is Math.max correct here?
+    private apply(that: Node<T>, levels: number){
+
+        for( let [k, thatCost] of that.values ){
+            const thisCost = this.values.get(k) ?? Infinity;
+            this.values.set(k, Math.min(thatCost + levels, thisCost));
         }
 
         for( let [token, branch] of [...that.branches] ){
-            this.branches.get( token ).merge( branch, depth );
+            this.branches.get( token ).apply( branch, levels );
         }
+
     }
 
     /** Pulls all sub-nodes up to the destination so they can be accessed from it. */
-    public hoist(destination: Node<T> = this, skip = 1){
+    public hoist(destination: Node<T> = this, levels = 1){
         for( let [_, branch] of [...this.branches] ){
-            destination.merge(branch, skip);
-            branch.hoist(destination, skip + 1);
+            destination.apply(branch, levels);
+            branch.hoist(destination, levels + 1);
         }
     }
 
@@ -165,6 +173,13 @@ class Node<T> {
             .map( kv => kv[0] )
     }
 
+    public summarize(): object {
+        return {
+            values: [...this.values.entries()],
+            branches: Object.fromEntries( this.branches.entries().map( kv => [kv[0].toString(), kv[1].summarize()] ) )
+        }
+    }
+
 }
 
 /**
@@ -210,6 +225,15 @@ export class PartialPatternTree<T> {
      */
     public search(query: string){
         return this.root.search(query);
+    }
+
+    /** 
+     * Returns a representation of the tree compatible with {@linkcode JSON.stringify} for debugging and research purposes.  
+     * 
+     * **Do not use this in production, as the structure may change even between patch versions of this package!**
+     */
+    public summarize() {
+        return this.root.summarize();
     }
 
 }
