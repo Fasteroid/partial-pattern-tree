@@ -1,6 +1,5 @@
 import test from "node:test";
 import { PartialPatternTree } from "../src/index"
-import { writeFileSync } from "fs";
 
 const tree = new PartialPatternTree<string>(
     [["parake",/^e+/m,"t"], "parakeet"],

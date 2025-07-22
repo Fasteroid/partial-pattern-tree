@@ -85,7 +85,7 @@ class Node<T> {
             this.values.set(k, Math.min(thatCost + levels, thisCost));
         }
 
-        for( let [token, branch] of [...that.branches] ){
+        for( let [token, branch] of that.branches ){
             this.branches.get( token ).apply( branch, levels );
         }
 
@@ -93,7 +93,7 @@ class Node<T> {
 
     /** Pulls all sub-nodes up to the destination so they can be accessed from it. */
     public hoist(destination: Node<T> = this, levels = 1){
-        for( let [_, branch] of [...this.branches] ){
+        for( let [_, branch] of this.branches ){
             destination.apply(branch, levels);
             branch.hoist(destination, levels + 1);
         }
@@ -109,7 +109,7 @@ class Node<T> {
 
             if( rest.branches.size === 1 && rest.values.size === 0 ) {
 
-                const [y, child] = [...rest.branches.entries()][0]
+                const [y, child] = rest.branches.entries().next().value!
                 if( typeof y !== 'string' ) continue;
 
                 this.branches.delete(x);

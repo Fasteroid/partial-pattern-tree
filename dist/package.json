@@ -1,6 +1,6 @@
 {
     "name": "@fasteroid/partial-pattern-tree",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Not quite partial regex matching, but pretty darn close!",
     "main": "index.js",
     "module": "index.js",
