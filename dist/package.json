@@ -1,6 +1,6 @@
 {
     "name": "@fasteroid/partial-pattern-tree",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Not quite partial regex matching, but pretty darn close!",
     "main": "index.js",
     "module": "index.js",
@@ -29,7 +29,7 @@
         "suffix-tree",
         "typescript",
         "javascript"
-      ],
+    ],
     "bugs": {
         "url": "https://github.com/Fasteroid/partial-pattern-tree/issues"
     },
@@ -46,6 +46,6 @@
         "**/**.d.ts.map"
     ],
     "peerDependencies": {
-        "@fasteroid/maps": "^1.0.0"
+        "@fasteroid/maps": "^1.0.1"
     }
 }
