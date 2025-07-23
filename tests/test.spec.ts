@@ -1,5 +1,6 @@
 import test from "node:test";
 import { PartialPatternTree } from "../src/index"
+import { writeFile, writeFileSync } from "fs";
 
 const tree = new PartialPatternTree<string>(
     [["parake",/^e+/m,"t"], "parakeet"],
@@ -9,7 +10,7 @@ const tree = new PartialPatternTree<string>(
     [["shepard"], "dog"],
     [[/^[bdgz]/m, "ingus"], "bingus"],
     [["skrunkly"], "cat"]
-)
+);
 
 test("zingus", () => {
     const zingus = tree.search("zin");
@@ -84,8 +85,8 @@ test("pirate", () => {
         errors.push("pirate didn't have cat");
     }
 
-    if( pirate.indexOf("dog") !== 3 ){
-        errors.push("pirate didn't have dog at index 3");
+    if( pirate.indexOf("parrot") > pirate.indexOf("dog")){
+        errors.push("parrot came after dog");
     }
 
     if( errors.length > 0 ){

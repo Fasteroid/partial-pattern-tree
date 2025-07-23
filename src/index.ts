@@ -1,13 +1,13 @@
 import { AutoCollisionMap, AutoMap } from "@fasteroid/maps";
 
-
-type Token = RegExp | string;
-
-type Sequence = Token[];
-
-type Distance = {
-    
+export namespace PartialPatternTree {
+    export type Token = RegExp | string;
+    export type Sequence = Token[];
 }
+
+type Token    = PartialPatternTree.Token;
+type Sequence = PartialPatternTree.Sequence;
+
 
 /** 
  * Given a query and a token, removes the partial match of the token from the query and returns it, or `undefined` if no match. 
@@ -62,10 +62,10 @@ class Node<T> {
     /** A set of values on this branch, associated with how many tokens deep at minimum we skipped to get to each. */
     private readonly values = new Map<T, number>();
 
-    /** Adds a sequence to the tree.  Make sure to {@link expandSequence | expand} it first! */
-    public addSequence(sequence: Sequence, value: T, depth = 0){
+    /** Merges a sequence into to the tree. */
+    public addSequence(sequence: Sequence, value: T, skipped = 0){
         if( sequence.length === 0 ) {
-            this.values.set(value, depth); // assume we didn't skip any tokens to get here
+            this.values.set( value, Math.min( this.values.get(value) ?? Infinity, skipped ) )
             return;
         }
 
@@ -73,51 +73,9 @@ class Node<T> {
         const rest  = sequence.slice(1);
 
         const victim = this.branches.get(first)
-        const length = typeof first === 'string' ? first.length : 1
-        victim.addSequence(rest, value, depth + length);
+        victim.addSequence(rest, value, skipped);
     }
 
-    /** Merges another node into this one. */
-    private apply(that: Node<T>, levels: number){
-
-        for( let [k, thatCost] of that.values ){
-            const thisCost = this.values.get(k) ?? Infinity;
-            this.values.set(k, Math.min(thatCost + levels, thisCost));
-        }
-
-        for( let [token, branch] of that.branches ){
-            this.branches.get( token ).apply( branch, levels );
-        }
-
-    }
-
-    /** Pulls all sub-nodes up to the destination so they can be accessed from it. */
-    public hoist(destination: Node<T> = this, levels = 1){
-        for( let [_, branch] of this.branches ){
-            destination.apply(branch, levels);
-            branch.hoist(destination, levels + 1);
-        }
-    }
-
-    /** Coalesces nodes that don't branch. */
-    public optimize(){
-        for( let [x, rest] of this.branches.entries() ) {
-
-            rest.optimize();
-
-            if( typeof x !== 'string' ) continue;
-
-            if( rest.branches.size === 1 && rest.values.size === 0 ) {
-
-                const [y, child] = rest.branches.entries().next().value!
-                if( typeof y !== 'string' ) continue;
-
-                this.branches.delete(x);
-                this.branches.set(x + y, child)
-            }
-            
-        }
-    }
     /**
      * Checks if a query matches anything in this Node
      */
@@ -133,6 +91,25 @@ class Node<T> {
         return false; // if all else fails
     }
 
+    /** Coalesces nodes that don't branch. */
+    public optimize(){
+        for( let [x, rest] of this.branches.entries() ) {
+
+            rest.optimize();
+
+            if( typeof x !== 'string' ) continue;
+
+            if( rest.branches.size === 1 ) {
+
+                const [y, child] = rest.branches.entries().next().value!
+                if( typeof y !== 'string' ) continue;
+
+                this.branches.delete(x);
+                this.branches.set(x + y, child)
+            }
+
+        }
+    }
 
     private _search( 
         query: string, 
@@ -200,15 +177,50 @@ export type SequenceValuePair<T> = [Sequence, T]
  */
 export class PartialPatternTree<T> {
 
-    private readonly root: Node<T>;
+    protected readonly root      = new Node<T>();
+    protected          optimized = false;
 
-    constructor( ...pairs: SequenceValuePair<T>[] ){
-        this.root = new Node<T>();
-        for( let pair of pairs ){
-            this.root.addSequence( expandSequence(pair[0]), pair[1] )
+    constructor( pairs?: SequenceValuePair<T>[] ){
+        if( pairs )
+            this.addSequences(pairs);
+    }
+
+    /** The inner workings of {@linkcode addSequence}, without the check for if the tree is optimized. */
+    protected _addSequence( pair: SequenceValuePair<T> ){
+        const expanded = expandSequence(pair[0]);
+        for (let i = 0; i < expanded.length; i++) {
+            this.root.addSequence( expanded.slice(i), pair[1], i )
         }
-        this.root.hoist();
+    }
+
+    /** 
+     * Adds a sequence to the tree, provided it has not yet been {@link optimize | optimized}.
+     * @throws if the tree has been optimized
+     */
+    public addSequence( pair: SequenceValuePair<T> ){
+        if( this.optimized ) throw new Error("This PartialPatternTree has been optimized and is no-longer accepting new sequences.");
+        this._addSequence(pair);
+    }
+
+    /** 
+     * Adds mulitple sequences to the tree, provided it has not yet been {@link optimize | optimized}.
+     * @throws if the tree has been optimized
+     */
+    public addSequences( pairs: SequenceValuePair<T>[] ) {
+        if( this.optimized ) throw new Error("This PartialPatternTree has been optimized and is no-longer accepting new sequences.");
+        for( let pair of pairs ){
+            this._addSequence(pair);
+        }
+    }
+
+    /** 
+     * Optimizes the tree by collapsing nodes that don't branch.
+     * #### Trade-off: after calling this the tree becomes read-only!
+     */
+    public optimize(){
+        if( this.optimized ) throw new Error("Already optimized.");
         this.root.optimize();
+        this.optimized = true;
     }
 
     /**
@@ -229,7 +241,7 @@ export class PartialPatternTree<T> {
 
     /** 
      * Returns a representation of the tree compatible with {@linkcode JSON.stringify} for debugging and research purposes.  
-     * 
+     * @internal
      * **Do not use this in production, as the structure may change even between patch versions of this package!**
      */
     public summarize() {

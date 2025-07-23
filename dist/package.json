@@ -1,13 +1,13 @@
 {
     "name": "@fasteroid/partial-pattern-tree",
-    "version": "1.0.4",
+    "version": "2.0.0",
     "description": "Not quite partial regex matching, but pretty darn close!",
     "main": "index.js",
     "module": "index.js",
     "types": "index.d.ts",
     "scripts": {
         "build": "tsc",
-        "test": "node -r esbuild-register --test **/*.spec.ts"
+        "test": "node --stack-size=2048 -r esbuild-register --test **/*.spec.ts"
     },
     "author": "Fasteroid",
     "contributors": [
