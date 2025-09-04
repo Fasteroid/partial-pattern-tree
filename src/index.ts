@@ -16,14 +16,14 @@ function consume(token: Token, query: string): string | undefined {
     if(query.length === 0){ return "" }
 
     if( token instanceof RegExp ){
-        const match = token.exec(query)
+        const match = token.exec(query);
         if( !match ) return undefined;
-        else return query.slice(match[0].length)
+        else return query.slice(match[0].length);
     }
     else {
-        const subject = query.slice(0, token.length)
-        if( token.startsWith(subject) ) return query.slice(token.length)
-        else return undefined
+        const subject = query.slice(0, token.length);
+        if( token.startsWith(subject) ) return query.slice(token.length);
+        else return undefined;
     }
 }
 
@@ -55,7 +55,7 @@ class Node<T> {
             throw new Error("Invalid token type in tree: " + typeof key);
         },
         () => {
-            return new Node<T>()
+            return new Node<T>();
         }
     );
 
@@ -65,14 +65,14 @@ class Node<T> {
     /** Merges a sequence into to the tree. */
     public addSequence(sequence: Sequence, value: T, skipped = 0){
         if( sequence.length === 0 ) {
-            this.values.set( value, Math.min( this.values.get(value) ?? Infinity, skipped ) )
+            this.values.set( value, Math.min( this.values.get(value) ?? Infinity, skipped ) );
             return;
         }
 
         const first = sequence[0];
         const rest  = sequence.slice(1);
 
-        const victim = this.branches.get(first)
+        const victim = this.branches.get(first);
         victim.addSequence(rest, value, skipped);
     }
 
@@ -95,18 +95,15 @@ class Node<T> {
     public optimize(){
         for( let [x, rest] of this.branches.entries() ) {
 
-            rest.optimize();
-
             if( typeof x !== 'string' ) continue;
 
-            if( rest.branches.size === 1 ) {
             if( rest.branches.size === 1 && rest.values.size === 0 ) {
 
-                const [y, child] = rest.branches.entries().next().value!
+                const [y, child] = rest.branches.entries().next().value!;
                 if( typeof y !== 'string' ) continue;
 
                 this.branches.delete(x);
-                this.branches.set(x + y, child)
+                this.branches.set(x + y, child);
             }
 
         }
@@ -135,11 +132,11 @@ class Node<T> {
             if( nextQuery === '' )
                 for( let [k, v] of branch.values ){
                     if( ret.get(k) > v ) // new best ranking
-                        ret.set(k, v)
+                        ret.set(k, v);
                 }
         }
 
-        return ret
+        return ret;
     }
 
     /**
@@ -148,14 +145,14 @@ class Node<T> {
     public search(query: string){
         return [...this._search(query).entries()]
             .sort( (kv0, kv1) => kv0[1] - kv1[1] )
-            .map( kv => kv[0] )
+            .map( kv => kv[0] );
     }
 
     public summarize(): object {
         return {
             values: [...this.values.entries()],
             branches: Object.fromEntries( this.branches.entries().map( kv => [kv[0].toString(), kv[1].summarize()] ) )
-        }
+        };
     }
 
 }
@@ -190,7 +187,7 @@ export class PartialPatternTree<T> {
     protected _addSequence( pair: SequenceValuePair<T> ){
         const expanded = expandSequence(pair[0]);
         for (let i = 0; i < expanded.length; i++) {
-            this.root.addSequence( expanded.slice(i), pair[1], i )
+            this.root.addSequence( expanded.slice(i), pair[1], i );
         }
     }
 
