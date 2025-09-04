@@ -44,7 +44,7 @@ for( let vars of IncludeExcludeVars ){
 
 }
 
-const tree = new PartialPatternTree<string>(...TEST_PAIRS)
+const tree = new PartialPatternTree<string>(TEST_PAIRS)
 
 test("real world", () => {
     const remnant = tree.search("mi");

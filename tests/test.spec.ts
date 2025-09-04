@@ -2,7 +2,7 @@ import test from "node:test";
 import { PartialPatternTree } from "../src/index"
 import { writeFile, writeFileSync } from "fs";
 
-const tree = new PartialPatternTree<string>(
+const tree = new PartialPatternTree<string>([
     [["parake",/^e+/m,"t"], "parakeet"],
     [["parrot"], "parrot"],
     [["shiba inu"], "doge"],
@@ -10,7 +10,7 @@ const tree = new PartialPatternTree<string>(
     [["shepard"], "dog"],
     [[/^[bdgz]/m, "ingus"], "bingus"],
     [["skrunkly"], "cat"]
-);
+]);
 
 test("zingus", () => {
     const zingus = tree.search("zin");

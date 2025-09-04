@@ -100,6 +100,7 @@ class Node<T> {
             if( typeof x !== 'string' ) continue;
 
             if( rest.branches.size === 1 ) {
+            if( rest.branches.size === 1 && rest.values.size === 0 ) {
 
                 const [y, child] = rest.branches.entries().next().value!
                 if( typeof y !== 'string' ) continue;
