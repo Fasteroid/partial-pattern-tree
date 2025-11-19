@@ -1,4 +1,6 @@
-import { AutoCollisionMap, AutoMap } from "@fasteroid/maps";
+import { AutoCollisionMap } from "@fasteroid/maps/AutoCollisionMap";
+import { AutoMap } from "@fasteroid/maps/AutoMap";
+
 
 export namespace PartialPatternTree {
     export type Token = RegExp | string;

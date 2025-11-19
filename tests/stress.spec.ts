@@ -1,7 +1,5 @@
 import test from "node:test";
 import { PartialPatternTree, SequenceValuePair } from "../src";
-import { AutoMap } from "@fasteroid/maps";
-import { writeFileSync } from "fs";
 
 
 const ops = {
