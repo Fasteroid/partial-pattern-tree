@@ -24,14 +24,14 @@ const tree = new PartialPatternTree<Pet>(
     [
         ["parake", /^e+/m, "t"], // this "name" matches parakeet, parakeeet, parakeeeee... you get the idea.
         {
-            name: "Newton"
+            name: "Newton",
             importance: "actually ate my homework once (not kidding)"
         }
     ],
     [
         ["parrot"], // this name just looks for "parrot"
         {
-            name: "Polly"
+            name: "Polly",
             importance: "has a crippling cracker addiction"
         }
     ]
