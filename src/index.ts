@@ -86,8 +86,7 @@ class Node<T> {
             const nextQuery = consume(token, query);
             if( nextQuery === undefined ) continue;
             if( nextQuery.length === 0 ) return true;
-
-            return branch.has(nextQuery);
+            if( branch.has(nextQuery) ) return true;
         }
 
         return false; // if all else fails
