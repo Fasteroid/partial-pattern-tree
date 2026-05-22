@@ -2,9 +2,7 @@
 /* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
     "compileOnSave": true,
-    "compilerOptions": {
-        "outDir": "./dist/out-tsc",
-        
+    "compilerOptions": {        
         "skipLibCheck": true,
         "isolatedModules": true,
         "experimentalDecorators": true,
@@ -13,7 +11,7 @@
         "declarationMap": true,                              /* Generates a sourcemap for each corresponding '.d.ts' file. */
         "sourceMap": true,                                   /* Generates corresponding '.map' file. */
         
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
         "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
         

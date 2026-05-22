@@ -82,7 +82,7 @@ class Node<T> {
      * Checks if a query matches anything in this Node
      */
     public has(query: string): boolean {
-        for( let [token, branch] of this.branches.entries() ){
+        for( let [token, branch] of this.branches ){
             const nextQuery = consume(token, query);
             if( nextQuery === undefined ) continue;
             if( nextQuery.length === 0 ) return true;
@@ -95,8 +95,7 @@ class Node<T> {
 
     /** Coalesces nodes that don't branch. */
     public optimize(){
-        for( let [x, rest] of this.branches.entries() ) {
-
+        for( let [x, rest] of this.branches ) {
             if( typeof x !== 'string' ) continue;
 
             if( rest.branches.size === 1 && rest.values.size === 0 ) {
@@ -107,7 +106,9 @@ class Node<T> {
                 this.branches.delete(x);
                 this.branches.set(x + y, child);
             }
-
+        }
+        for( let [_, node] of this.branches ) {
+            node.optimize();
         }
     }
 
@@ -116,7 +117,7 @@ class Node<T> {
         ret = new AutoMap<T, number>( () => Infinity ), matched = "", recursion = 0 
     ): Map< T, number > {
 
-        for( let [token, branch] of this.branches.entries() ){
+        for( let [token, branch] of this.branches ){
             const nextQuery = consume(token, query);
 
             let fail = false;
@@ -145,14 +146,14 @@ class Node<T> {
      * Queries this node for applicable entries, sorted by how well they match.
      */
     public search(query: string){
-        return [...this._search(query).entries()]
+        return [...this._search(query)]
             .sort( (kv0, kv1) => kv0[1] - kv1[1] )
             .map( kv => kv[0] );
     }
 
     public summarize(): object {
         return {
-            values: [...this.values.entries()],
+            values: [...this.values],
             branches: Object.fromEntries( this.branches.entries().map( kv => [kv[0].toString(), kv[1].summarize()] ) )
         };
     }
