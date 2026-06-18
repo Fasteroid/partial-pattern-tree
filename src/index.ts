@@ -49,16 +49,20 @@ function expandSequence(sequence: Sequence){
 
 class Node<T> {
 
+    private static collider(k: Token): string {
+        if( typeof k === 'string' ) return k;
+        if( k instanceof RegExp ) return k.source;
+        throw new Error("Invalid token type in tree: " + typeof k);
+    }
+    private static computer<T>() {
+        return new Node<T>();
+    }
+
+
     /** Sub-nodes organized by next token(s) */
     private readonly branches = new AutoCollisionMap<Token, Node<T>>( 
-        (key) => {
-            if( typeof key === 'string' ) return key;
-            if( key instanceof RegExp ) return key.source;
-            throw new Error("Invalid token type in tree: " + typeof key);
-        },
-        () => {
-            return new Node<T>();
-        }
+        Node.collider,
+        Node.computer
     );
 
     /** A set of values on this branch, associated with how many tokens deep at minimum we skipped to get to each. */
